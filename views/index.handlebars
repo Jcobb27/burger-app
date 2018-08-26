@@ -1,33 +1,62 @@
-<h1>Burgers!</h1>
+<h1>Burger Logger!</h1>
 
 <h2>Burgers on the Menu!</h2>
 
-<ul>
-  {{#each burgers}}
-    {{#unless devoured}}
-      {{burger_name}}
-	<button class="devour-it" data-id="{{this.id}}">Devour it!</button>
-    {{/unless}}
-  {{/each}}
-</ul>
+<ol>
+
+    {{#each burgers}} {{#unless devoured}}
+    <li>
+        {{burger_name}}
+        <button class="devour-it" data-id="{{this.id}}">Devour it!</button>
+    </li>
+    {{/unless}} {{/each}}
+
+</ol>
 
 <h2>Burgers that are devoured!</h2>
 
-<ul>
-  {{#each burgers}}
-    {{#if devoured}}
-      {{burger_name}}
-    {{/if}}
-  {{/each}}
-</ul>
+<ol>
+
+    {{#each burgers}} {{#if devoured}}
+    <li>
+        {{burger_name}}
+    </li>
+    {{/if}} {{/each}}
+
+</ol>
 
 <h2>Add a Burger</h2>
-<form class="create-form" method = "POST" action = "/api/burgers">
+<form class="create-form" method="POST" action="/api/burgers">
 
-  <div class="form-group">
-    <label for="ca">Burger Name:</label>
-    <input type="text" id="ca" name="name">
-  </div>
+    <div class="form-group">
+        <label for="ca">Burger Name:</label>
+        <input type="text" id="ca" name="name">
+    </div>
 
-  <button type="submit">Add Burger</button>
+    <button type="submit">Add Burger</button>
 </form>
+
+<script>
+    $(".devour-it").on("click", function (event) {
+        // Make sure to preventDefault on a submit event.
+        event.preventDefault();
+
+        var id = $(this).data("id");
+        var burger = {
+            id: $(this).data("id"),
+            devoured: true
+        }
+
+        // Send the POST request.
+        $.ajax("/api/burgers/" + id, {
+            type: "PUT",
+            data: burger
+        }).then(
+            function () {
+                console.log("devoured");
+                // Reload the page to get the updated list
+                location.assign("/");
+            }
+        );
+    });
+</script>
